@@ -20,8 +20,7 @@ services:
       - ../.env
 
   frontend:
-    build:
-      image: spbguap/foodgram_frontend:latest
+    image: spbguap/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
