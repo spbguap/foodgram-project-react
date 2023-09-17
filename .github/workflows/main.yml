@@ -140,7 +140,7 @@ jobs:
     needs:
       - build_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
-    #     - build_gateway_and_push_to_docker_hub
+      # - build_gateway_and_push_to_docker_hub
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -163,7 +163,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
-            cd foodgram
+            cd foodgram/infra
             # Выполняет pull образов с Docker Hub
             sudo docker compose -f docker-compose.production.yml pull
             # Перезапускает все контейнеры в Docker Compose
