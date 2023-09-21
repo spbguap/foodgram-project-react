@@ -85,3 +85,50 @@ class SubscribeSerializer(UserSerializer):
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.subscribing).count()
+
+
+class SubscribeToUserSerializer(serializers.ModelSerializer):
+    queryset = User.objects.all()
+    user = serializers.PrimaryKeyRelatedField(queryset=queryset)
+    subscribing = serializers.PrimaryKeyRelatedField(queryset=queryset)
+
+    class Meta:
+        model = Subscribe
+        fields = ('user', 'subscribing')
+
+    def validate(self, data):
+        request = self.context.get('request')
+        subscribing_id = data['subscribing'].id
+        subscribe_is_exists = Subscribe.objects.filter(
+            user=request.user, subscribing__id=subscribing_id
+        ).exists()
+
+        if request.method == 'POST':
+            if request.user.id == subscribing_id:
+                raise serializers.ValidationError('Нельзя подписаться насебя')
+            if subscribe_is_exists:
+                raise serializers.ValidationError(
+                    'Вы уже подписаны на этого пользователя'
+                )
+
+        return data
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, data):
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        user = self.context['request'].user
+
+        if not current_password or not new_password:
+            raise serializers.ValidationError(
+                "Требуется текущий и новый пароль"
+            )
+
+        if not user.check_password(current_password):
+            raise serializers.ValidationError("Неверный текущий пароль")
+
+        return data

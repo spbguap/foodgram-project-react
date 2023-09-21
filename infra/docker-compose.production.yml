@@ -26,6 +26,8 @@ services:
   nginx:
     image: nginx:1.19.3
     ports:
+      # используется не стандартный порт
+      # 80 порт на удаленном сервере занят обратным proxy nginx
       - "9999:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf

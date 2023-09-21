@@ -51,3 +51,10 @@ docker compose exec backend python manage.py import_ingredients data/ingredients
 Теперь можно перейти по адресу
 http://127.0.0.1/
 и начать использовать приложение
+
+## Cайт
+
+http://fooodgram.ddns.net/
+
+логин: adm@example.com
+пароль: 1234qweR
