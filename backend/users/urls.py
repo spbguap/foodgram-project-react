@@ -1,18 +1,21 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import ChangePasswordView  # SubscribeListViewSet,;
-from .views import CustomUserViewSet  # UserDetailView,
-from .views import SubscribeListViewSet  # UserDetailView,
-from .views import CurrentUserView, SubscribeToUserView
+from .views import (
+    ChangePasswordView,
+    CurrentUserView,
+    CustomUserViewSet,
+    SubscribeListViewSet,
+    SubscribeToUserView,
+)
 
 router = DefaultRouter()
 
 router.register(
-    r'users/subscriptions', SubscribeListViewSet, basename='subscribe'
+    'users/subscriptions', SubscribeListViewSet, basename='subscribe'
 )
 
-router.register(r'users', CustomUserViewSet, basename='users')
+router.register('users', CustomUserViewSet, basename='users')
 
 
 urlpatterns = [

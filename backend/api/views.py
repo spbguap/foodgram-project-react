@@ -48,16 +48,17 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all().order_by('-pub_date')
+    queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
     filter_class = RecipeFilter
+
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         user = self.request.user
         if user.is_anonymous:
-            return Recipe.objects.all().order_by('-pub_date')
+            return Recipe.objects.all()
         recipes = Recipe.objects.annotate(
             is_favorited=Exists(
                 Favorites.objects.filter(user=user, recipe_id=OuterRef('pk'))
@@ -69,12 +70,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ),
         )
         if self.request.GET.get('is_favorited'):
-            return recipes.filter(is_favorited=True).order_by('-pub_date')
+            return recipes.filter(is_favorited=True)
         elif self.request.GET.get('is_in_shopping_cart'):
-            return recipes.filter(is_in_shopping_cart=True).order_by(
-                '-pub_date'
-            )
-        return recipes.order_by('-pub_date')
+            return recipes.filter(is_in_shopping_cart=True)
+        return recipes
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
@@ -92,9 +91,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'user': user.id,
             'recipe': recipe.id,
         }
+
         serializer = FavoriteSerializer(
             data=data, context={'request': request}
         )
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -122,6 +123,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'user': user.id,
             'recipe': recipe.id,
         }
+
         serializer = ShoppingCartSerializer(
             data=data, context={'request': request}
         )
@@ -141,9 +143,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        user = self.request.user
-        if user.is_anonymous:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         ingredients = (
             RecipeIngredient.objects.select_related('recipes')
             .filter(recipe__customers__user=request.user)

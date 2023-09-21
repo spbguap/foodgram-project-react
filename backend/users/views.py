@@ -12,8 +12,7 @@ from rest_framework.authentication import get_user_model
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
-from users.models import Subscribe
-
+from .models import Subscribe
 from .serializers import SubscribeSerializer, UserSerializer
 
 User = get_user_model()

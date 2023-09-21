@@ -1,8 +1,11 @@
 from rest_framework import serializers
+from rest_framework.authentication import get_user_model
 
 from recipes.models import Recipe
 
 from .models import CustomUser, Subscribe
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -69,10 +72,13 @@ class SubscribeSerializer(UserSerializer):
 
     def get_recipes(self, obj):
         limit = self.context.get('request').query_params.get('recipes_limit')
+
         if limit:
+            # fmt: off
             queryset = Recipe.objects.filter(author=obj.subscribing).order_by(
                 '-id'
-            )[: int(limit)]
+            )[:int(limit)]
+            # fmt: on
         else:
             queryset = Recipe.objects.filter(author=obj.subscribing)
         return SubscribeResipeSerializer(queryset, many=True).data
