@@ -32,50 +32,6 @@ class CurrentUserView(generics.RetrieveAPIView):
         return self.request.user
 
 
-# class CustomUserViewSet(UserViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-#     pagination_class = LimitOffsetPagination
-
-#     @action(
-#         detail=True,
-#         methods=['POST'],
-#         permission_classes=[permissions.IsAuthenticated],
-#     )
-#     def subscribe(self, request, id=None):
-#         user = request.user
-#         subscribing = get_object_or_404(User, id=id)  # author
-#         data = {
-#             'user': user.id,
-#             'subscribing': subscribing.id,
-#         }
-#         serializer = SubscribeToUserSerializer(
-#             data=data, context={'request': request}
-#         )
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-
-#         return Response(
-#             serializer.data,
-#             {"detail": "Подписка успешна."},
-#             status=status.HTTP_201_CREATED,
-#         )
-
-#     @subscribe.mapping.delete
-#     def delete_subscribe(self, request, id=None):
-#         user = request.user
-#         subscribing = get_object_or_404(User, id=id)
-#         subscribe = get_object_or_404(
-#             Subscribe, user=user, subscribing=subscribing
-#         )
-#         subscribe.delete()
-
-#         return Response(
-#             status=status.HTTP_204_NO_CONTENT,
-#         )
-
-
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -103,7 +59,6 @@ class CustomUserViewSet(UserViewSet):
 
         return Response(
             serializer.data,
-            {"detail": "Подписка успешна."},
             status=status.HTTP_201_CREATED,
         )
 

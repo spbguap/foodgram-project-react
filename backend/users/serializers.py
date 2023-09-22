@@ -91,10 +91,11 @@ class SubscribeToUserSerializer(serializers.ModelSerializer):
     queryset = User.objects.all()
     user = serializers.PrimaryKeyRelatedField(queryset=queryset)
     subscribing = serializers.PrimaryKeyRelatedField(queryset=queryset)
+    subscribing_user = UserSerializer(source='subscribing', read_only=True)
 
     class Meta:
         model = Subscribe
-        fields = ('user', 'subscribing')
+        fields = ('user', 'subscribing', 'subscribing_user')
 
     def validate(self, data):
         request = self.context.get('request')
@@ -112,6 +113,12 @@ class SubscribeToUserSerializer(serializers.ModelSerializer):
                 )
 
         return data
+
+    def to_representation(self, instance):
+        result = super().to_representation(instance)
+        result.pop('user')
+        result.pop('subscribing')
+        return result
 
 
 class ChangePasswordSerializer(serializers.Serializer):
