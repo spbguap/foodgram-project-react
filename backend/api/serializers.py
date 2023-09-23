@@ -115,6 +115,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             instance.tags.add(get_object_or_404(Tag, pk=tag_id))
         return instance
 
+    @staticmethod
     def add_ingredients(self, ingredients, instance):
         for ingredient in ingredients:
             ingredients_amounts = RecipeIngredient.objects.create(

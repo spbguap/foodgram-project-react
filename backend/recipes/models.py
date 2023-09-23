@@ -35,7 +35,11 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(Tag)
     cooking_time = models.PositiveIntegerField(
-        validators=(MinValueValidator(1),)
+        validators=(
+            MinValueValidator(
+                1, message="Время приготовления должно быть больше 1"
+            ),
+        )
     )
 
     pub_date = models.DateTimeField(
@@ -114,7 +118,7 @@ class Favorites(models.Model):
         verbose_name_plural = 'Избранное'
 
     def __str__(self):
-        return f"{self.recipe} в избранном у {self.user} "
+        return f'{self.recipe} в избранном у {self.user}'
 
 
 class ShoppingCart(models.Model):

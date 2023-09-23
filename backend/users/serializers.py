@@ -100,6 +100,7 @@ class SubscribeToUserSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context.get('request')
         subscribing_id = data['subscribing'].id
+
         subscribe_is_exists = Subscribe.objects.filter(
             user=request.user, subscribing__id=subscribing_id
         ).exists()
@@ -132,10 +133,10 @@ class ChangePasswordSerializer(serializers.Serializer):
 
         if not current_password or not new_password:
             raise serializers.ValidationError(
-                "Требуется текущий и новый пароль"
+                'Требуется текущий и новый пароль'
             )
 
         if not user.check_password(current_password):
-            raise serializers.ValidationError("Неверный текущий пароль")
+            raise serializers.ValidationError('Неверный текущий пароль')
 
         return data

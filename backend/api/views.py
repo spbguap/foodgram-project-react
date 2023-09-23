@@ -1,6 +1,8 @@
-from django.db.models import Exists, OuterRef, Sum
+# from django.db.models import Exists, OuterRef, Sum
+from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -51,29 +53,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomPagination
-    filter_class = RecipeFilter
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_anonymous:
-            return Recipe.objects.all()
-        recipes = Recipe.objects.annotate(
-            is_favorited=Exists(
-                Favorites.objects.filter(user=user, recipe_id=OuterRef('pk'))
-            ),
-            is_in_shopping_cart=Exists(
-                ShoppingCart.objects.filter(
-                    user=user, recipe_id=OuterRef('pk')
-                )
-            ),
-        )
-        if self.request.GET.get('is_favorited'):
-            return recipes.filter(is_favorited=True)
-        elif self.request.GET.get('is_in_shopping_cart'):
-            return recipes.filter(is_in_shopping_cart=True)
-        return recipes
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)

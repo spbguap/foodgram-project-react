@@ -104,6 +104,6 @@ class ChangePasswordView(generics.CreateAPIView):
         user.save()
 
         return Response(
-            {"detail": "Пароль успешно изменен."},
+            {'detail': 'Пароль успешно изменен.'},
             status=status.HTTP_200_OK,
         )
