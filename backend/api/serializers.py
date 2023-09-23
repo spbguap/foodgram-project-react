@@ -116,7 +116,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
     @staticmethod
-    def add_ingredients(self, ingredients, instance):
+    def add_ingredients(ingredients, instance):
         for ingredient in ingredients:
             ingredients_amounts = RecipeIngredient.objects.create(
                 recipe=instance,
